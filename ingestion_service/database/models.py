@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, String, Numeric, Boolean, DateTime, ForeignKey, Index
 from sqlalchemy.orm import declarative_base, relationship
 
-Base = declarative_base()
+Base = declarative_base()  # Это просто для ORM, не для создания таблиц
 
 class RawTrade(Base):
     __tablename__ = 'raw_trades'
@@ -17,10 +17,7 @@ class RawTrade(Base):
     __table_args__ = (
         Index('idx_raw_trades_time', trade_time.desc()),
     )
-    
-    def __repr__(self):
-        return f"<RawTrade(trade_id={self.trade_id}, price={self.price})>"
-    
+
 class Category(Base):
     __tablename__ = 'categories'
     
@@ -29,10 +26,6 @@ class Category(Base):
     created_at = Column(DateTime(timezone=True), default=datetime.now)
     
     products = relationship("Product", back_populates="category_ref")
-    
-    def __repr__(self):
-        return f"<Category(name={self.name})>"
-
 
 class Product(Base):
     __tablename__ = 'products'
@@ -49,6 +42,3 @@ class Product(Base):
     __table_args__ = (
         Index('idx_products_category', category_id),
     )
-    
-    def __repr__(self):
-        return f"<Product(product_id={self.product_id}, title={self.title})>"

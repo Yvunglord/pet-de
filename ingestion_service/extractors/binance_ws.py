@@ -36,7 +36,7 @@ class BinanceWebSocketExtractor(BaseExtractor):
                         
                         try:
                             data = json.loads(message)
-                            parsed = self._parse_trade_message(data)
+                            parsed = self._parse_trade_messages(data)
                             if parsed:
                                 yield parsed
                         except json.JSONDecodeError as e:

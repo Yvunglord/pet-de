@@ -1,6 +1,5 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy.pool import NullPool
-from ..config import CRYPTO_DB, STORE_DB, APP
+from ..config import CRYPTO_DB, STORE_DB
 from ..logger import log
 
 _crypto_engine = None
@@ -30,19 +29,15 @@ async def init_db_pools():
     _crypto_session_factory = async_sessionmaker(
         bind=_crypto_engine,
         class_=AsyncSession,
-        expire_on_commit=False,
-        autocommit=False,
-        autoflush=False
+        expire_on_commit=False
     )
     
     _store_session_factory = async_sessionmaker(
         bind=_store_engine,
         class_=AsyncSession,
-        expire_on_commit=False,
-        autocommit=False,
-        autoflush=False
+        expire_on_commit=False
     )
-
+    
     log.info("Database connection pools initialized successfully")
 
 async def close_db_pools():
