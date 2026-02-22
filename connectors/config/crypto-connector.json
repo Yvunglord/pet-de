@@ -1,0 +1,33 @@
+{
+  "name": "postgres-crypto-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "tasks.max": "1",
+    
+    "database.hostname": "postgres-crypto",
+    "database.port": "5432",
+    "database.user": "postgres",
+    "database.password": "secret",
+    "database.dbname": "db_crypto",
+    "database.server.name": "db.crypto",
+    
+    "table.include.list": "public.raw_trades",
+    
+    "plugin.name": "pgoutput",
+    "publication.name": "dbz_publication_crypto",
+    "slot.name": "debezium_crypto_slot",
+    
+    "topic.prefix": "db.crypto",
+    
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": false,
+    "value.converter.schemas.enable": false,
+    
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": false,
+    
+    "heartbeat.interval.ms": "60000"
+  }
+}
