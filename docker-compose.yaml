@@ -217,6 +217,38 @@ services:
     networks:
       - ingestion_net
 
+  clickhouse:
+    image: clickhouse/clickhouse-server:head
+    container_name: clickhouse
+    environment:
+      CLICKHOUSE_DB: dwh
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: secret
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    ports:
+      - "8123:8123"
+      - "9001:9000"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - ./db_init/clickhouse:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
+          cpus: '1.5'
+    restart: unless-stopped
+    networks:
+      - ingestion_net
+    depends_on:
+      kafka:
+        condition: service_healthy
+
 volumes:
   crypto_data:
     driver: local
@@ -225,6 +257,8 @@ volumes:
   kafka_data:
     driver: local
   pgadmin_data:
+    driver: local
+  clickhouse_data:
     driver: local
 
 networks:
