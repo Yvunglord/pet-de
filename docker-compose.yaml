@@ -619,6 +619,8 @@ services:
         condition: service_healthy
       jar-downloader:
         condition: service_completed_successfully
+      connector-setup:
+        condition: service_completed_successfully
     volumes:
       - ./jobs:/opt/spark/work-dir/jobs:ro
       - ./jars:/opt/spark/work-dir/jars:ro
