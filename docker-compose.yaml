@@ -43,17 +43,20 @@ services:
     volumes:
       - ./jars:/jars
       - ./connectors/postgresql:/connectors/postgresql
+      - ./ivy_cache:/ivy_cache
+      - ./checkpoints:/checkpoints
     command: >
       sh -c "
         apk add --no-cache curl &&
-        mkdir -p /jars /connectors/postgresql &&
+        mkdir -p /jars /connectors/postgresql /ivy_cache /checkpoints &&
+        chmod 777 /ivy_cache /checkpoints &&            # Даём полные права на обе папки
         echo 'Downloading PostgreSQL JDBC driver for Debezium...' &&
         curl -L -o /connectors/postgresql/postgresql.jar https://jdbc.postgresql.org/download/postgresql-42.7.10.jar &&
         echo 'Downloading ClickHouse JDBC driver for Spark...' &&
         curl -L -o /jars/clickhouse-jdbc-0.9.6-all.jar https://github.com/ClickHouse/clickhouse-jdbc/releases/download/v0.9.6/clickhouse-jdbc-0.9.6-all.jar &&
         echo 'Downloading PostgreSQL JDBC driver for Spark (optional)...' &&
         curl -L -o /jars/postgresql-42.7.10.jar https://jdbc.postgresql.org/download/postgresql-42.7.10.jar &&
-        echo 'All JARs downloaded.'
+        echo 'All JARs downloaded and directories prepared.'
       "
     restart: "no"
     networks:
