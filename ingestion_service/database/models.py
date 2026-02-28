@@ -1,10 +1,18 @@
 from datetime import datetime
 
-from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Index, Integer,
-                        Numeric, String)
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Index,
+    Integer,
+    Numeric,
+    String,
+)
 from sqlalchemy.orm import declarative_base, relationship
 
-Base = declarative_base()  # Это просто для ORM, не для создания таблиц
+Base = declarative_base()
 
 
 class RawTrade(Base):

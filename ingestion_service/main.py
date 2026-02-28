@@ -1,9 +1,7 @@
 import asyncio
 import signal
 
-from .config import APP
-from .database import (close_db_pools, get_crypto_pool, get_store_pool,
-                       init_db_pools)
+from .database import close_db_pools, get_crypto_pool, get_store_pool, init_db_pools
 from .extractors import BinanceWebSocketExtractor, FakeStoreRestExtractor
 from .loaders import CryptoDataLoader, StoreDataLoader
 from .logger import log

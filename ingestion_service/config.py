@@ -12,7 +12,10 @@ class DatabaseSettingsBase(BaseSettings):
 
     @property
     def database_url(self) -> str:
-        return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.dbname}"
+        return (
+            f"postgresql+asyncpg://{self.user}:{self.password}"
+            f"@{self.host}:{self.port}/{self.dbname}"
+        )
 
 
 class CryptoDatabaseSettings(DatabaseSettingsBase):

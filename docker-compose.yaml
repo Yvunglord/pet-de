@@ -36,7 +36,7 @@ x-airflow-common:
     - ingestion_net
 
 services:
-  
+
   jar-downloader:
     image: alpine:latest
     container_name: jar_downloader
@@ -75,9 +75,9 @@ services:
       - crypto_data:/var/lib/postgresql/data
       - ./db_init/crypto:/docker-entrypoint-initdb.d:ro
     command: >
-      postgres 
-      -c wal_level=logical 
-      -c max_replication_slots=4 
+      postgres
+      -c wal_level=logical
+      -c max_replication_slots=4
       -c max_wal_senders=4
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${CRYPTO_USER:-postgres} -d ${CRYPTO_DBNAME:-db_crypto}"]
@@ -106,9 +106,9 @@ services:
       - store_data:/var/lib/postgresql/data
       - ./db_init/store:/docker-entrypoint-initdb.d:ro
     command: >
-      postgres 
-      -c wal_level=logical 
-      -c max_replication_slots=4 
+      postgres
+      -c wal_level=logical
+      -c max_replication_slots=4
       -c max_wal_senders=4
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${STORE_USER:-postgres} -d ${STORE_DBNAME:-db_store}"]
@@ -173,7 +173,7 @@ services:
       - postgres-crypto
       - postgres-store
     restart: unless-stopped
-  
+
   ingestion:
     build:
       context: .
@@ -206,10 +206,10 @@ services:
     deploy:
       resources:
         limits:
-          memory: 768M 
+          memory: 768M
           cpus: '1.0'
         reservations:
-          memory: 256M 
+          memory: 256M
           cpus: '0.25'
     restart: unless-stopped
     networks:

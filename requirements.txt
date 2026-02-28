@@ -7,3 +7,6 @@ asyncpg==0.31.0
 apache-airflow==3.1.7
 apache-airflow-providers-apache-spark==5.5.0
 apache-airflow-providers-docker==4.5.2
+black==26.1.0
+isort==8.0.1
+pre_commit==4.5.1

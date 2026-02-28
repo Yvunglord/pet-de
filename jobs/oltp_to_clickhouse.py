@@ -2,9 +2,8 @@ import logging
 import sys
 
 from pyspark.sql import DataFrame, SparkSession
-from pyspark.sql.functions import col, decode, from_json, lit, to_timestamp
-from pyspark.sql.types import (BooleanType, DoubleType, StringType,
-                               StructField, StructType, TimestampType)
+from pyspark.sql.functions import col, decode, from_json, to_timestamp
+from pyspark.sql.types import BooleanType, StringType, StructField, StructType
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -96,7 +95,8 @@ def write_to_clickhouse(df: DataFrame, epoch_id: int):
             "driver", "com.clickhouse.jdbc.ClickHouseDriver"
         ).option(
             "customSchema",
-            "trade_id String, price Double, quantity Double, trade_time Timestamp, is_buyer_maker Boolean, loaded_at Timestamp",
+            "trade_id String, price Double, quantity Double, "
+            "trade_time Timestamp, is_buyer_maker Boolean, loaded_at Timestamp",
         ).option(
             "batchsize", "10000"
         ).option(
@@ -124,7 +124,8 @@ query = (
 )
 
 logger.info(
-    f"🎯 Spark Streaming started! Topic: {KAFKA_TOPIC} → ClickHouse: default.{target_table}"
+    f"🎯 Spark Streaming started! Topic: {KAFKA_TOPIC} "
+    f"→ ClickHouse: default.{target_table}"
 )
 logger.info(f"📁 Checkpoint: {CHECKPOINT_DIR}")
 

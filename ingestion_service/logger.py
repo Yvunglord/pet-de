@@ -23,7 +23,10 @@ def setup_logger():
         rotation="100 MB",
         retention="7 days",
         level=APP.log_level,
-        format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} | {message}",
+        format=(
+            "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | "
+            "{name}:{function}:{line} | {message}"
+        ),
     )
 
     return logger

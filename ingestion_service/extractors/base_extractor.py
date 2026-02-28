@@ -11,7 +11,6 @@ class BaseExtractor(ABC):
 
     @abstractmethod
     async def extract(self) -> AsyncGenerator[Dict[str, Any], None]:
-        pass
         yield
 
     async def start(self):

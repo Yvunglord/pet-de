@@ -83,6 +83,7 @@ class BinanceWebSocketExtractor(BaseExtractor):
         self._reconnect_count += 1
 
         log.warning(
-            f"Reconnecting in {delay} seconds (attempt {self._reconnect_count}/{self.MAX_RECONNECT_ATTEMPTS})"
+            f"Reconnecting in {delay} seconds "
+            f"(attempt {self._reconnect_count}/{self.MAX_RECONNECT_ATTEMPTS})"
         )
         await asyncio.sleep(delay)
