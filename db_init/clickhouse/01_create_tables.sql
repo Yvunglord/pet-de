@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS bronze_crypto_trades (
     price Float64,
     quantity Float64,
     trade_time DateTime64(3),
-    is_buyer_maker Bool,
+    is_buyer_maker UInt8,
     loaded_at DateTime64(3) DEFAULT now64(3)
 )
 ENGINE = MergeTree()
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS silver_crypto_trades (
     quantity Float64,
     trade_time DateTime64(3),
     hour_start DateTime64(3),
-    is_buyer_maker Bool,
+    is_buyer_maker UInt8,
     ingested_at DateTime64(3) DEFAULT now64(3)
 )
 ENGINE = MergeTree()

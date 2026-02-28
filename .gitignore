@@ -205,3 +205,23 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Airflow
+logs/
+plugins/
+airflow.cfg
+airflow.db
+unittests.cfg
+airflow-webserver.pid
+
+# Spark
+checkpoints/
+ivy_cache/
+*.log
+*.out
+*.pid
+*.checkpoint
+
+# JAR files
+jars/*.jar
+connectors/postgresql/*.jar
