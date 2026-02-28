@@ -41,7 +41,6 @@ async def init_db_pools():
     log.info("Database connection pools initialized successfully")
 
 async def close_db_pools():
-    global _crypto_engine, _store_engine
     
     if _crypto_engine:
         await _crypto_engine.dispose()

@@ -11,7 +11,7 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY ingestion_service/ ./ingestion_service/
-COPY .env .env
+COPY .env.example .env
 
 RUN useradd -m -u 1000 ingestion && chown -R ingestion:ingestion /app
 USER ingestion
