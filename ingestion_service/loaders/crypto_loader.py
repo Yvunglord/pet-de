@@ -1,9 +1,11 @@
-from typing import List, Dict, Any
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Any, Dict, List
+
 from sqlalchemy import insert
 from sqlalchemy.dialects.postgresql import insert as pg_insert
-from ..database.models import RawTrade
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from ..config import APP
+from ..database.models import RawTrade
 from ..logger import log
 
 

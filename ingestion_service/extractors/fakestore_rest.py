@@ -1,11 +1,13 @@
 import asyncio
 from datetime import datetime, timezone
-from typing import AsyncGenerator, Dict, Any, List
+from typing import Any, AsyncGenerator, Dict, List
+
 import aiohttp
 from aiohttp.client_exceptions import ClientError
-from .base_extractor import BaseExtractor
+
 from ..config import APP
 from ..logger import log
+from .base_extractor import BaseExtractor
 
 
 class FakeStoreRestExtractor(BaseExtractor):

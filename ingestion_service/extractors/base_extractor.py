@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import AsyncGenerator, Any, Dict
+from typing import Any, AsyncGenerator, Dict
+
 from ..logger import log
 
 

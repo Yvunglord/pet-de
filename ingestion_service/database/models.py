@@ -1,14 +1,7 @@
 from datetime import datetime
-from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    Numeric,
-    Boolean,
-    DateTime,
-    ForeignKey,
-    Index,
-)
+
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Index, Integer,
+                        Numeric, String)
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()  # Это просто для ORM, не для создания таблиц

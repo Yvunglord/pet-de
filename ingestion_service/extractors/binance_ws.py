@@ -1,12 +1,14 @@
 import asyncio
 import json
 from datetime import datetime, timezone
-from typing import AsyncGenerator, Dict, Any
+from typing import Any, AsyncGenerator, Dict
+
 import websockets
 from websockets.exceptions import ConnectionClosed, WebSocketException
-from .base_extractor import BaseExtractor
+
 from ..config import APP
 from ..logger import log
+from .base_extractor import BaseExtractor
 
 
 class BinanceWebSocketExtractor(BaseExtractor):

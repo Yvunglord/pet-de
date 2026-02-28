@@ -1,15 +1,10 @@
-import sys
 import logging
-from pyspark.sql import SparkSession, DataFrame
-from pyspark.sql.functions import from_json, col, decode, to_timestamp, lit
-from pyspark.sql.types import (
-    StructType,
-    StructField,
-    StringType,
-    DoubleType,
-    BooleanType,
-    TimestampType,
-)
+import sys
+
+from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql.functions import col, decode, from_json, lit, to_timestamp
+from pyspark.sql.types import (BooleanType, DoubleType, StringType,
+                               StructField, StructType, TimestampType)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
