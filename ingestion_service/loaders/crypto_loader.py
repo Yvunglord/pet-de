@@ -26,7 +26,7 @@ class CryptoDataLoader:
         try:
             async with self.session_factory() as session:
                 stmt = pg_insert(RawTrade).values(self._buffer)
-                stmt = stmt.on_conflict_do_nothing(index_elements=["trade_id"])
+                stmt = stmt.on_conflict_do_nothing(index_elements=["symbol", "trade_id"])
 
                 await session.execute(stmt)
                 await session.commit()

@@ -1,8 +1,12 @@
 import logging
 import sys
+import re
 
 from pyspark.sql import DataFrame, SparkSession
-from pyspark.sql.functions import col, decode, from_json, to_timestamp
+from pyspark.sql.functions import (
+    col, decode, from_json, to_timestamp,
+    regexp_extract, when, lit
+)
 from pyspark.sql.types import BooleanType, StringType, StructField, StructType
 
 logging.basicConfig(level=logging.INFO)
@@ -33,16 +37,16 @@ spark = (
 spark.sparkContext.setLogLevel("INFO")
 logger.info(f"Spark session created. Reading from {KAFKA_TOPIC}")
 
-trade_schema = StructType(
-    [
-        StructField("trade_id", StringType(), True),
-        StructField("price", StringType(), True),
-        StructField("quantity", StringType(), True),
-        StructField("trade_time", StringType(), True),
-        StructField("is_buyer_maker", BooleanType(), True),
-        StructField("loaded_at", StringType(), True),
-    ]
-)
+# === ОБНОВЛЕННАЯ СХЕМА: добавили symbol ===
+trade_schema = StructType([
+    StructField("symbol", StringType(), True),  # ← НОВОЕ ПОЛЕ
+    StructField("trade_id", StringType(), True),
+    StructField("price", StringType(), True),
+    StructField("quantity", StringType(), True),
+    StructField("trade_time", StringType(), True),
+    StructField("is_buyer_maker", BooleanType(), True),
+    StructField("loaded_at", StringType(), True),
+])
 
 df_kafka = (
     spark.readStream.format("kafka")
@@ -65,17 +69,40 @@ df_parsed = df_kafka.select(
     from_json(decode(col("value"), "UTF-8"), trade_schema).alias("data"),
 )
 
+# === ДЕНОРМАЛИЗАЦИЯ: вычисляем дополнительные поля ===
 df_flat = df_parsed.select(
+    # Базовые поля
+    col("data.symbol").alias("symbol"),
     col("data.trade_id").alias("trade_id"),
     col("data.price").cast("Double").alias("price"),
     col("data.quantity").cast("Double").alias("quantity"),
     to_timestamp(col("data.trade_time")).alias("trade_time"),
     col("data.is_buyer_maker").alias("is_buyer_maker"),
-    col("kafka_timestamp").alias("loaded_at"),
+    
+    # === Денормализованные поля ===
+    
+    # Объём сделки в кворте (цена * количество)
+    (col("price") * col("quantity")).alias("trade_value"),
+    
+    # Извлекаем base/quote активы из символа: BTCUSDT → BTC, USDT
+    regexp_extract(col("symbol"), r"^([A-Z]+)([A-Z]+)$", 1).alias("base_asset"),
+    regexp_extract(col("symbol"), r"^([A-Z]+)([A-Z]+)$", 2).alias("quote_asset"),
+    
+    # Флаг крупной сделки (> $10,000)
+    ((col("price") * col("quantity")) > lit(10000)).alias("is_large_trade"),
+    
+    # Метаданные
+    col("kafka_timestamp").alias("kafka_loaded_at"),
+    col("data.loaded_at").cast("Timestamp").alias("source_loaded_at"),
+    
 ).filter(
-    (col("trade_id").isNotNull())
-    & (col("price").isNotNull())
-    & (col("trade_time").isNotNull())
+    (col("symbol").isNotNull()) &
+    (col("trade_id").isNotNull()) &
+    (col("price").isNotNull()) &
+    (col("quantity").isNotNull()) &
+    (col("trade_time").isNotNull()) &
+    (col("price") > 0) &  # валидация: цена положительная
+    (col("quantity") > 0)   # валидация: количество положительное
 )
 
 
@@ -88,24 +115,20 @@ def write_to_clickhouse(df: DataFrame, epoch_id: int):
 
         logger.info(f"📤 Batch {epoch_id}: writing {count} rows")
 
-        # Явно указываем схему для маппинга типов
+        # === ОБНОВЛЕННАЯ customSchema: добавили новые поля ===
         df.write.format("jdbc").option("url", jdbc_url_target).option(
             "dbtable", f"default.{target_table}"
         ).option("user", ch_user).option("password", ch_password).option(
             "driver", "com.clickhouse.jdbc.ClickHouseDriver"
         ).option(
             "customSchema",
-            "trade_id String, price Double, quantity Double, "
-            "trade_time Timestamp, is_buyer_maker Boolean, loaded_at Timestamp",
-        ).option(
-            "batchsize", "10000"
-        ).option(
-            "isolationLevel", "NONE"
-        ).option(
+            "symbol String, trade_id String, price Double, quantity Double, "
+            "trade_time Timestamp, is_buyer_maker Boolean, "
+            "trade_value Double, base_asset String, quote_asset String, "
+            "is_large_trade Boolean, kafka_loaded_at Timestamp, source_loaded_at Timestamp",
+        ).option("batchsize", "10000").option("isolationLevel", "NONE").option(
             "truncate", "false"
-        ).mode(
-            "append"
-        ).save()
+        ).mode("append").save()
 
         logger.info(f"✅ Batch {epoch_id}: successfully written")
 

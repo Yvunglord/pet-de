@@ -9,6 +9,7 @@ from sqlalchemy import (
     Integer,
     Numeric,
     String,
+    PrimaryKeyConstraint,
 )
 from sqlalchemy.orm import declarative_base, relationship
 
@@ -18,14 +19,19 @@ Base = declarative_base()
 class RawTrade(Base):
     __tablename__ = "raw_trades"
 
-    trade_id = Column(String, primary_key=True)
+    symbol = Column(String, nullable=False)
+    trade_id = Column(String, nullable=False)
     price = Column(Numeric, nullable=False)
     quantity = Column(Numeric, nullable=False)
     trade_time = Column(DateTime(timezone=True), nullable=False)
     is_buyer_maker = Column(Boolean, nullable=False)
     loaded_at = Column(DateTime(timezone=True), default=datetime.utcnow)
 
-    __table_args__ = (Index("idx_raw_trades_time", trade_time.desc()),)
+    __table_args__ = (
+        PrimaryKeyConstraint("symbol", "trade_id"),
+        Index("idx_raw_trades_symbol_time", symbol, trade_time.desc()),
+        Index("idx_raw_trades_time", trade_time.desc()),
+    )
 
 
 class Category(Base):

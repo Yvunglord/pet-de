@@ -191,7 +191,7 @@ services:
       STORE_USER: ${STORE_USER:-postgres}
       STORE_PASSWORD: ${STORE_PASSWORD:-secret}
       LOG_LEVEL: INFO
-      BINANCE_WS_URL: wss://stream.binance.com:9443/ws/btcusdt@trade
+      APP_BINANCE_WS_STREAMS: '["wss://stream.binance.com:9443/ws/btcusdt@trade","wss://stream.binance.com:9443/ws/ethusdt@trade"]'
       FAKESTORE_API_URL: https://fakestoreapi.com/products
     volumes:
       - ./ingestion_service:/app/ingestion_service:ro
